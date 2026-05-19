@@ -23,3 +23,6 @@ These projects focus heavily on practical risk mitigation, cultural data alignme
 * **Core Focus:** AI-assisted software development (Vibe Coding), API data parsing, and user database management.
 
 *For deep-dives into data schemas, prompt templates, and workflow screenshots, click into any of the project directories listed above.*
+
+## Repository Documentation Review
+> **With AI Assistance:** The documentation in ai-project-record was compiled with AI assistance. The underlying architectural design, system logic, and governance frameworks represent my original work and were personally reviewed, verified, and refined.
