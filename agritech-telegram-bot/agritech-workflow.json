@@ -1,0 +1,862 @@
+{
+  "name": "COWDATA",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 👂 INBOUND MESSAGES\n\nThis triggers on every new text sent to the bot.",
+        "height": 816,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "c1b41a61-c41f-4fc3-89d5-1d98870a7b22",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🚦 TRAFFIC CONTROL\n\nTRUE path: User is replying to a bot question (Updating data). FALSE path: User is asking a new question (Looking up a calf).",
+        "height": 816,
+        "width": 416,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "b7f65697-5ddc-44da-97d8-db3fd5fda35f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 DATA FETCH & CALC\n\n1. Extracts number from text (e.g. \"Who is 5\" -> \"5\").\n\n2. Finds row in Google Sheets.\n\n3. JavaScript node calculates \"Age\" from DOB.",
+        "height": 816,
+        "width": 448,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        832,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "6edb5619-e97a-4d8f-8718-f10114963be1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 RESPONSE LOGIC\n\n**TRUE:** Personality exists -> Send full bio. FALSE: Personality missing -> Send \"Force Reply\" question.\n\n**Important:**\n The \"Missing Data\" node MUST use \"Force Reply\" markup so the user's answer goes to the Update Path.",
+        "height": 816,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1296,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "54811c40-707e-4d3a-af13-a080c9a66353",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## 💾 UPDATE DATABASE\n\n1. Grabs Tag # from the original bot message (the quoted text).\n\n2. Updates the \"Personality\" column in Sheets.\n\n3. Confirms success to user.",
+        "height": 816,
+        "width": 720,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1696,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "4e2235ad-910c-44d3-ac70-5f100f5f32f9",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        288
+      ],
+      "id": "25212373-eb47-4828-916e-e856caca398f",
+      "name": "Telegram Trigger",
+      "webhookId": "060ffeb3-8f30-4115-bceb-0a40bc195974",
+      "credentials": {
+        "telegramApi": {
+          "id": "AkN8FR5uDgAhdrAS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b7482796-57d5-416f-980d-3aab228130b5",
+              "leftValue": "={{ $json.message.reply_to_message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        288
+      ],
+      "id": "4d8e2f9a-cc3e-4c0e-95d0-a993eaf39a7a",
+      "name": "Check if Reply"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ce560561-035f-44a2-8663-ac5e07c88571",
+              "name": "calf_id",
+              "value": "={{ $json.message.text.match(/\\d+/)[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        256
+      ],
+      "id": "aea5bf4d-a059-4d1d-96e7-8b4130083707",
+      "name": "Extract Number"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4",
+          "mode": "list",
+          "cachedResultName": "Calf Registry",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Tag Number",
+              "lookupValue": "={{ $json.calf_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        256
+      ],
+      "id": "297581c6-9aa2-413f-9ce6-6b4e92ee9c86",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jAVAnfytFIA7YSTT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through every item (Standard n8n safety)\nreturn $input.all().map(item => {\n    const data = item.json;\n\n    // 1. SAFETY CHECK: Did we actually find a cow?\n    // If \"Tag Number\" is missing, it means the Google Sheet found nothing.\n    if (!data[\"Tag Number\"]) {\n        return {\n            json: {\n                found: false,\n                final_message: \"🚫 Uh oh! I couldn't find a cow with that tag number in my records.\"\n            }\n        };\n    }\n\n    // 2. HELPER: The \"Unclassified\" Checker\n    // If text is blank, null, or undefined, return \"Unclassified\"\n    const check = (text) => {\n        if (!text || text === \"\") return \"Unclassified\";\n        return text;\n    };\n\n    // 3. GET DATA & APPLY CHECKS\n    const name = check(data[\"Name\"]);\n    const tag = data[\"Tag Number\"];\n    const breed = check(data[\"Breed\"]);\n    const personality = check(data[\"Personality\"]);\n\n    // 4. AGE MATH (Restored from your original code)\n    const birthDateString = data[\"Date of Birth\"];\n    let ageDisplay = \"Unclassified\"; // Default if DOB is missing\n\n    if (birthDateString) {\n        const birthDate = new Date(birthDateString);\n        const today = new Date();\n        let years = today.getFullYear() - birthDate.getFullYear();\n        let months = today.getMonth() - birthDate.getMonth();\n        let days = today.getDate() - birthDate.getDate();\n\n        if (days < 0) {\n            months--;\n            const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0);\n            days += previousMonth.getDate();\n        }\n        if (months < 0) {\n            years--;\n            months += 12;\n        }\n\n        ageDisplay = \"\";\n        if (years > 0) ageDisplay += `${years}yr `;\n        if (months > 0) ageDisplay += `${months}mo `;\n        ageDisplay += `${days}d`;\n    }\n\n    // 5. CONSTRUCT THE PRETTY MESSAGE\n    const message = `\n🐮 *Name:* ${name}\n🏷 *Tag:* ${tag}\n🎂 *Age:* ${ageDisplay}\n🧬 *Breed:* ${breed}\n⭐ *Personality:* ${personality}\n`;\n\n    // 6. RETURN RESULT\n    return {\n        json: {\n            found: true,\n            final_message: message.trim()\n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        256
+      ],
+      "id": "fcae4e2f-fcb4-430b-93a1-f88b527d3069",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.final_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        256
+      ],
+      "id": "00d1a523-6ba2-4300-9de3-08c6598e59e4",
+      "name": "Send a text message",
+      "webhookId": "331e7bae-dc02-44e2-a7dc-72defcd1d0ee",
+      "credentials": {
+        "telegramApi": {
+          "id": "AkN8FR5uDgAhdrAS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.output[0].content[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        432
+      ],
+      "id": "547c0103-0387-4c52-9f0e-1df35b7472dc",
+      "name": "Send a text message1",
+      "webhookId": "002f6b22-9354-4a05-ba31-aa6b5f5a4bb8",
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "AkN8FR5uDgAhdrAS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are Baby Moo Moo, a helpful herd assistant. You love cows and use emojis like 🐮 and 🌿.\n\nI have attached the full herd data below. Use this to answer questions like 'how many cows' or 'who is the oldest'.\n\nHERD DATA: {{ JSON.stringify($json.herd_summary) }}\n\nIMPORTANT FORMATTING RULE:\nWhenever you mention a cow's name, you MUST include their Tag Number in brackets immediately after.\n- Correct: \"I found Thai Mango (Tag 50) and Peaches (Tag 20).\"\n- Wrong: \"I found Thai Mango and Peaches.\"\n\nAlways verify the tag number from the data provided."
+            },
+            {
+              "content": "={{ $('Telegram Trigger').first().json.message.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        432
+      ],
+      "id": "4bb63c2e-ddab-4a75-860a-39d3b2c7d9d7",
+      "name": "Friendly AI BOT ",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "K7C79UOecSRyABJA",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4",
+          "mode": "list",
+          "cachedResultName": "Calf Registry",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        432
+      ],
+      "id": "154763cc-7b00-476a-898e-c076aa5dfbdd",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jAVAnfytFIA7YSTT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge all rows into one \"herd\" list for the AI\nreturn [{\n    json: {\n        herd_summary: $input.all().map(item => item.json)\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        432
+      ],
+      "id": "2485dc84-3527-45c3-8e96-0f48a2f24315",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "9912bfc9-b856-4dca-9977-d4466bec947b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "66591138-5bdb-458f-ae61-034f74d392ce",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": ".*\\d+.*",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8079d30d-4bdb-4f95-a4c4-698e96e74c3e",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0674f92f-836d-42d2-9188-67a9b54316de",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "(?i).*update.*",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        272
+      ],
+      "id": "ef46276d-e212-49d6-8cbf-6607ea5b9b80",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a serious Database Administrator for the Herd.\nYour job is to read the user's request and format it into a \"Confirmation Card\" so they can check the details.\n\n1. Extract the TAG NUMBER (Required). If missing, ask for it.\n2. Extract any fields they want to change (Name, Breed, DOB, Personality).\n3. Ignore fields they didn't mention.\n\nreply EXACTLY in this format:\n\n⚠️ **CONFIRM UPDATE**\nPlease reply YES to save these changes:\nTag: [Tag Number]\nName: [New Name]\nBreed: [New Breed]\nDOB: [New DOB]\nPersonality: [New Personality]\n(Reply NO to cancel)"
+            },
+            {
+              "content": "={{ $('Telegram Trigger').first().json.message.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        32
+      ],
+      "id": "c7e3b875-8eee-4f31-b213-be234f917ab0",
+      "name": "Admin AI",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "K7C79UOecSRyABJA",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.output.content[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        976,
+        32
+      ],
+      "id": "7fb4fd84-23d3-4a35-a425-a86bb0371020",
+      "name": "Send a text message2",
+      "webhookId": "002f6b22-9354-4a05-ba31-aa6b5f5a4bb8",
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "AkN8FR5uDgAhdrAS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4",
+          "mode": "list",
+          "cachedResultName": "Calf Registry",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11_uwORS4WRoPNhnLh6Nj6yqGMW1BlipxLtRP7g_m2p4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tag Number": "={{ $json[\"Tag Number\"] }}",
+            "Name": "={{ $json[\"Name\"] }}",
+            "Breed": "={{ $json[\"Breed\"] }}",
+            "Date of Birth": "={{ $json[\"Date of Birth\"] }}",
+            "Personality": "={{ $json[\"Personality\"] }}",
+            "Appearance": "="
+          },
+          "matchingColumns": [
+            "Tag Number"
+          ],
+          "schema": [
+            {
+              "id": "Tag Number",
+              "displayName": "Tag Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Breed",
+              "displayName": "Breed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date of Birth",
+              "displayName": "Date of Birth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Personality",
+              "displayName": "Personality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appearance",
+              "displayName": "Appearance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2064,
+        352
+      ],
+      "id": "4a8e2b6a-bc7a-42ec-9fbe-57ccb27e46d2",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jAVAnfytFIA7YSTT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=The user replied \"YES\" to confirm an update.\nAnalyze the \"Reply To Message\" text and extract the data to update the database.\n\nOutput ONLY JSON in this format:\n{\n  \"Tag Number\": \"5\",\n  \"Name\": \"Betsy\",\n  \"Breed\": \"Angus\"\n}\n(Only include fields that were mentioned in the text)."
+            },
+            {
+              "content": "={{ $('Telegram Trigger').first().json.message.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        352
+      ],
+      "id": "3929f3e7-7ac2-4c0e-823a-0c24d4082d1f",
+      "name": "Parser AI",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "K7C79UOecSRyABJA",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Update Complete ✅",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        352
+      ],
+      "id": "9d3fef01-b86f-48b1-837f-bb7259eaa2f1",
+      "name": "Send a text message3",
+      "webhookId": "03b9c3ba-1e8b-4ca0-b22e-6049f226cd6d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AkN8FR5uDgAhdrAS",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check if Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Reply": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Number": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Friendly AI BOT ": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Friendly AI BOT ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Admin AI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Number",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parser AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin AI": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser AI": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d593c459-b5c2-474f-81d8-3fef9e1c59f4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "39d55ee811ccdaa6eb1a2562352c4dd02df948e49eebb7dacdd05bbe95285c0b"
+  },
+  "id": "fqZOXwgMNAjlsZbI",
+  "tags": []
+}
