@@ -74,5 +74,3 @@ Monolithic, single-turn prompts operate inside an un-trackable "black box," maki
 > **With AI Assistance:** This documentation was compiled with AI assistance. The underlying architectural design, system logic, and governance frameworks represent my original work and were personally reviewed, verified, and refined.
 >
 
-As documented in the repository's `architecture-flow.png`, the system routes variable inputs through a layered inference pipeline to maintain context across multiple specialized generative tasks:
-
