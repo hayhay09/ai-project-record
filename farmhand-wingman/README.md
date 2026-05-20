@@ -42,9 +42,6 @@ As documented in the repository's `architecture-flow.png`, the system routes var
 
 ## System Node Connections
 As documented in the repository's core node architecture map, the system dynamically weights and maps user variables directly down through sequential processing blocks:
-
-![AWS Bedrock Node Flow Chart](architecture-flow.png)
-
 ---
 
 ## Technical Merits & Prompt Engineering Insights
