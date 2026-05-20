@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions."fetch-recipe"]
+  timeout = 26
+  memory = 1024
+  node_bundler = "zisi"
+  node_version = "20"
