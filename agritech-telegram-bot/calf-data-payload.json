@@ -1,0 +1,12 @@
+{
+  "event_type": "telegram_msg_ingestion",
+  "timestamp": "2026-08-20T17:05:50Z",
+  "data_origin": "Personal-Edge Chat Integration",
+  "payload": {
+    "tag_number": "5",
+    "name": "Betsy",
+    "breed": "KiwiCross",
+    "date_of_birth": "2026-08-10",
+    "personality": "Adventurous and highly alert, loves to shadow the herd leaders"
+  }
+}
