@@ -1,0 +1,34 @@
+{
+  "users": {
+    "USER_UNIQUE_ID_001": {
+      "profile": {
+        "username": "Hayel",
+        "preferences": {
+          "theme": "light",
+          "measurement_system": "Metric"
+        }
+      },
+      "recipes": {
+        "recipe_id_777": {
+          "title": "Artisan Sourdough Loaf",
+          "source_url": "https://example-baking-blog.co.nz/sourdough",
+          "parsed_timestamp": "2026-05-19T09:00:00Z",
+          "ingredients": [
+            { "name": "High-Grade Flour", "quantity": "500", "measurement": "g" },
+            { "name": "Water", "quantity": "375", "measurement": "g" },
+            { "name": "Sourdough Starter", "quantity": "100", "measurement": "g" },
+            { "name": "Salt", "quantity": "10", "measurement": "g" }
+          ],
+          "instructions": "Step 1: Mix flour, water, and starter. Rest for 30 minutes.\nStep 2: Add salt and perform stretch-and-folds over 2 hours.\nStep 3: Shape the dough and proof overnight in the fridge.\nStep 4: Bake at 230°C in a preheated Dutch oven for 45 minutes."
+        }
+      },
+      "calendar_events": {
+        "event_id_101": {
+          "date": "2026-05-23",
+          "recipe_id": "recipe_id_777",
+          "notes": "Remember to feed the sourdough starter 8 hours before mixing!"
+        }
+      }
+    }
+  }
+}
